@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCore - Add Patient</title>
+    <link rel="icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/formStyleSheet.css}">
+</head>
+
+<body>
+<div class="container">
+    <form class="form-container" th:action="@{/addPacient}" th:object="${pacient}" method="post">
+        <h2 class="h2-title">Add Patient</h2>
+        <p th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" style="color: red"></p>
+        <input type="text" placeholder="First Name" th:field="*{firstName}"><br>
+
+        <p th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" style="color: red"></p>
+        <input type="text" placeholder="Last Name" th:field="*{lastName}"><br>
+
+        <p th:if="${#fields.hasErrors('cnp')}" th:errors="*{cnp}" style="color: red"></p>
+        <input type="text" placeholder="CNP" th:field="*{cnp}"><br>
+
+        <p th:if="${#fields.hasErrors('age')}" th:errors="*{age}" style="color: red"></p>
+        <input type="text" placeholder="Age" th:field="*{age}"><br>
+
+        <input type="text" placeholder="Email" th:field="*{email}"><br>
+
+        <p th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" style="color: red"></p>
+        <input type="text" placeholder="Phone Number" th:field="*{phoneNumber}"><br><br>
+
+        <button type="submit" class="button">Save</button>
+        <button type="button" class="button cancel-button" onclick="history.back()">Cancel</button>
+    </form>
+</div>
+</body>
+
+</html>

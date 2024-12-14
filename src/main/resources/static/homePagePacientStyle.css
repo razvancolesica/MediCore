@@ -1,0 +1,44 @@
+.top-table {
+    width: 100%;
+    height: 150px;
+    border-collapse: separate;
+    border-spacing: 30px;
+}
+
+.top-table td {
+    color: white;
+    font-size: 20px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 0 10px;
+    width: 20%;
+}
+
+.reservations-statistics-container{
+    background-color: #229a44;
+}
+
+.pacients-statistics-container{
+    background-color: #9028e1;
+}
+
+.specializations-statistics-container{
+    background-color: #cf5a7a;
+}
+
+.doctors-statistics-container{
+    background-color: #e6a90f;
+}
+
+.statistics-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+}
+
+.bottom-text{
+    font-size: 30px;
+    font-weight: 600;
+}

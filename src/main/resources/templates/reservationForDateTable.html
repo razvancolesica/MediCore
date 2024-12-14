@@ -1,0 +1,27 @@
+<table xmlns:th="http://www.w3.org/1999/xhtml">
+  <thead th:if="${hasReservations}">
+  <tr>
+    <th>ID</th>
+    <th>Pacient ID</th>
+    <th>First Name</th>
+    <th>Last Name</th>
+  </tr>
+  </thead>
+  <tbody th:if="${hasReservations}">
+  <tr th:each="reservation : ${reservationList}">
+    <td th:text="${reservation.id}"></td>
+    <td th:text="${reservation.pacientID}"></td>
+    <td th:text="${reservation.firstName}"></td>
+    <td th:text="${reservation.lastName}"></td>
+  </tr>
+  </tbody>
+  <tbody th:if="${!hasReservations}">
+  <tr></tr>
+  <tr></tr>
+  <tr>
+    <td colspan="4" style="text-align: center; font-size: 18px; background-color: #f9f9f9; color: #666;">
+      <p>No reservations scheduled for the selected date.</p>
+    </td>
+  </tr>
+  </tbody>
+</table>

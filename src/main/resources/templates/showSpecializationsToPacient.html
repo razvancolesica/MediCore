@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediCore - Specializations</title>
+  <link rel="icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+  <link rel="stylesheet" th:href="@{/pageStyleSheet.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="top-bar">
+  <div class="user-button">
+    <button class="user-btn">
+      <img th:src="@{/images/pacient-profile-image.svg}" alt="User Avatar">
+      <div class="user-info">
+        <span class="user-name" th:text="${pacient.lastName + ' ' + pacient.firstName}"></span>
+        <span class="user-role">Pacient</span>
+      </div>
+      <i id="user-icon" class="fas fa-chevron-down dropdown-arrow"></i>
+    </button>
+    <div class="dropdown-content" id="dropdown-content">
+      <a href="myProfile">My Profile</a>
+      <a href="/" onclick="return confirm('Are you sure you want to log out?');">Log Out</a>
+    </div>
+  </div>
+</div>
+
+<div class="all-content">
+
+  <header>
+    <div class="sidebar">
+      <div class="logo-container">
+        <img th:src="@{/images/logo.png}" alt="Hospital Logo">
+      </div>
+      <nav>
+        <ul>
+          <li><a href="homePagePacient"><i class="fas fa-house-medical menu-icon"></i>Home</a></li>
+          <li><a href="reservationsForPacient"><i class="fas fa-calendar-days menu-icon"></i>My Reservations</a></li>
+          <li><a  class="active-page" href="showSpecializationsToPacient"><i class="fa-solid fa-briefcase-medical"></i> Specializations</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <div class="main-content" style="background-image: url('/images/background-image.jpg');
+    background-size: 150px;
+    background-position: center;">
+    <main>
+
+      <div class="title-container">
+        <h2>Specializations</h2>
+      </div>
+
+      <table class="table-container">
+        <thead>
+        <tr>
+          <th>Specialization Name</th>
+          <th>Medic</th>
+          <th colspan="2">Room</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr th:each="specialization : ${specializations}">
+          <td th:text="${specialization.specializationName}"></td>
+          <td th:text="${specialization.medic}"></td>
+          <td colspan="2" th:text="${specialization.room}"></td>
+        </tr>
+        <tr>
+          <td colspan="4" th:if="${#lists.isEmpty(specializations)}">There are no specializations!</td>
+        </tr>
+        </tbody>
+      </table>
+    </main>
+  </div>
+</div>
+
+<script>
+function toggleDropdown(event) {
+  event.stopPropagation(); // Oprire propagare eveniment pentru a preveni deschiderea meniului dropdown atunci când se apasă pe numele sau poza utilizatorului
+  document.getElementById("dropdown-content").classList.toggle("show");
+}
+
+document.getElementById("user-icon").addEventListener("click", toggleDropdown);
+
+window.onclick = function(event) {
+  if (!event.target.matches('.user-btn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediCore - Edit Reservation</title>
+  <link rel="icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+  <link rel="stylesheet" th:href="@{/formStyleSheet.css}">
+
+  <script>
+    function limitTextarea(element) {
+      var maxChars = 300;
+      var charCount = element.value.length;
+      if (charCount > maxChars) {
+        element.value = element.value.substring(0, maxChars);
+        charCount = maxChars;
+      }
+      document.getElementById('charCount').innerText = charCount + '/' + maxChars + ' characters';
+    }
+  </script>
+
+</head>
+<body>
+
+<div class="container">
+  <form class="form-container" th:action="@{/editReservationByPacient}" th:object="${reservation}" method="post">
+    <h2 class="h2-title">Edit Reservation</h2>
+    <input type="hidden" name="reservationID" th:value="${reservation.id}" />
+    <input type="hidden" placeholder="pacientID" th:field="*{pacientID}"><br>
+    <input type="text" placeholder="firstName" th:field="*{firstName}"><br>
+    <input type="text" placeholder="lastName" th:field="*{lastName}"><br>
+    <input type="datetime-local" placeholder="reservationDate" th:field="*{reservationDate}"><br>
+    <select th:field="*{specialization}">
+      <option value="" disabled selected>Select a specialization</option>
+      <option th:each="specialization : ${specializations}" th:value="${specialization.specializationName}" th:text="${specialization.specializationName}"></option>
+    </select><br>
+    <textarea oninput="limitTextarea(this)" rows="5" cols="50" placeholder="Issue" th:field="*{issue}"></textarea><br>
+    <span id="charCount">0/300 characters</span><br><br>
+    <button type="submit" class="button">Save</button>
+    <button type="button" class="button cancel-button" onclick="history.back()">Cancel</button>
+  </form>
+</div>
+
+</body>
+</html>

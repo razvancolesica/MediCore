@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Log In or Register</title>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/startPageStyle.css}" type="text/css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons/css/boxicons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+<div class="background-image"></div>
+<div class="form-container">
+    <div class="custom-container">
+        <h2>Log In or Register</h2>
+        <form th:action="@{/login}" method="post" id="registerForm">
+            <div th:if="${errorMessage}" th:text="${errorMessage}" style="color:black;"></div>
+            <div class="form-group">
+                <label class="text-start" for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control shadow-none" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label class="text-start" for="password">Password</label>
+                <div class="input-group">
+                    <input type="password" class="form-control shadow-none password-input" id="password" name="password" placeholder="Enter your password" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text" onclick="togglePasswordVisibility()" style="cursor: pointer;"><i class='bx bxs-show' id='passwordIcon'></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="text-end mt-3">
+                <a href="#" onclick="showResetPasswordForm()">Forgot password?</a>
+            </div>
+            <div class="text-center mt-3">
+                <button type="submit" name="action" value="login" class="btn btn-orange">Log In</button>
+            </div>
+            <div class="text-center mt-3">
+                <label for="password">Don't have an account? </label><span class="register-button" onclick="completeRegistration()" style="cursor: pointer; text-decoration: underline;">Sign Up</span>
+            </div>
+
+        </form>
+
+        <form id="resetPasswordForm" method="post">
+            <div class="form-group">
+                <label for="emailReset">Email:</label>
+                <input type="email" id="emailReset" name="emailReset" class="form-control shadow-none" placeholder="Enter your email" required>
+            </div>
+            <div class="text-center mt-3">
+                <button type="button" onclick="sendResetPasswordRequest()" class="btn btn-orange">Send Reset Link</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    function completeRegistration() {
+    var form = document.getElementById("registerForm");
+    form.action = "/pacientRegistrationForm";
+    form.submit();
+   }
+
+    function togglePasswordVisibility() {
+        var passwordInput = document.getElementById("password");
+        var passwordIcon = document.getElementById("passwordIcon");
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            passwordIcon.classList.replace('bxs-show', 'bxs-hide');
+        } else {
+            passwordInput.type = "password";
+            passwordIcon.classList.replace('bxs-hide', 'bxs-show');
+        }
+    }
+
+    function addFocusStyles() {
+        var passwordInput = document.getElementById("password");
+        var inputGroupText = passwordInput.nextElementSibling.querySelector('.input-group-text');
+        passwordInput.classList.add('focused');
+        if(inputGroupText) {
+            inputGroupText.classList.add('focused');
+        }
+    }
+
+    function removeFocusStyles() {
+        var passwordInput = document.getElementById("password");
+        var inputGroupText = passwordInput.nextElementSibling.querySelector('.input-group-text');
+        passwordInput.classList.remove('focused');
+        if(inputGroupText) {
+            inputGroupText.classList.remove('focused');
+        }
+    }
+
+    document.getElementById("password").addEventListener('focus', addFocusStyles);
+    document.getElementById("password").addEventListener('blur', removeFocusStyles);
+
+    function showResetPasswordForm() {
+        var form = document.getElementById("resetPasswordForm");
+        if (form.style.display === "block") {
+            form.style.display = "none";
+        } else {
+            form.style.display = "block";
+        }
+    }
+
+    function sendResetPasswordRequest() {
+        var emailReset = document.getElementById("emailReset").value;
+        document.getElementById("resetPasswordForm").action = "/requestResetPassword";
+        document.getElementById("resetPasswordForm").submit();
+    }
+</script>
+
+</body>
+</html>

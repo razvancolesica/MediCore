@@ -1,0 +1,113 @@
+* {
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background-image: url('/images/background-image.jpg');
+    background-size: 150px;
+    background-position: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.form-container {
+    width: 500px;
+    margin-inline: auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-container input {
+    font-size: 16px;
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-container select {
+    font-size: 16px;
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-container textarea {
+    width: 100%;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-container button.cancel-button {
+    width: 100%;
+    background-image: linear-gradient(to right, #cf5a7a 0%, #624B75 51%, #cf5a7a 100%);
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: #fff;
+    padding: 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 17px;
+    margin-top: 10px;
+    line-height: 0px;
+}
+
+.form-container button.cancel-button:hover {
+    color: #fff;
+    background-position: right center;
+}
+
+.form-container button[type="submit"] {
+    width: 100%;
+    background-image: linear-gradient(to right, #4CAF50 0%, #388E3C 51%, #4CAF50 100%);
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: #fff;
+    padding: 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 17px;
+    margin-top: 10px;
+    line-height: 0px;
+}
+
+.form-container button[type="submit"]:hover {
+    color: #fff;
+    background-position: right center;
+}
+
+.form-container button.cancel-button {
+    background-image: linear-gradient(to right, #f44336 0%, #d32f2f 51%, #f44336 100%);
+}
+
+.h2-title {
+    text-align: center;
+    padding-top: 25px;
+    padding-bottom: 15px;
+    margin: auto;
+    color: #624b75;
+}

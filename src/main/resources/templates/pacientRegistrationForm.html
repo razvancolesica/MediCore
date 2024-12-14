@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <link rel="stylesheet" href="https://unpkg.com/boxicons/css/boxicons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+  <meta charset="UTF-8">
+  <title>Register client</title>
+  <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}" type="text/css">
+  <style>
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            background-color: #f4f7fc;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .background-image {
+            width: 60%;
+            background-image: url("/images/login-background.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .form-container {
+            width: 40%;
+            background-color: #f4f7fc;
+            color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 100vh;
+            position: relative;
+        }
+
+        .container-fluid {
+            margin-top:85px;
+        }
+
+        h3 {
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            color: var(--label-color);
+        }
+
+        .form-control {
+            background-color: #f4f7fc;
+            border: 1px solid black;
+            border-radius: 15px;
+            color: black;
+            padding: 10px;
+            margin-top:10px;
+        }
+
+        .form-control:focus {
+            border-color: #cf5a7a;
+            background-color: #f4f7fc;
+            color:black;
+        }
+
+        .focused {
+            border-color: #cf5a7a !important;
+            background-color: #f4f7fc !important;
+            color: black !important;
+        }
+
+        .form-control::placeholder{
+            color: #5A5B5E;
+        }
+
+        .form-group {
+            margin-top:15px;
+        }
+
+        .btn-orange {
+            margin: 0 auto;
+            display: block;
+            width: 95%;
+            background-image: linear-gradient(to right, #cf5a7a 0%, #624B75  51%, #cf5a7a  100%);
+            transition: 0.5s; background-size: 200% auto;
+            color: #ffffff;
+            height: 50px;
+            margin-top:10px;
+            margin-bottom: 10px;
+            border-radius: 15px;
+        }
+
+        .btn-orange:hover {
+            background-position: right center;
+            color:#fff;
+        }
+
+        .input-group-text{
+            background-color: #f4f7fc;
+            border: 1px solid black;
+            border-bottom-right-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom-left-radius: 0px;
+            border-top-left-radius: 0px;
+            border-left: none;
+            color: white;
+            padding: 10px;
+            margin-top:10px;
+        }
+
+        .bxs-show, .bxs-hide {
+            color: #cf5a7a;
+            font-size: 25px;
+        }
+
+        .password-input {
+            border-right: none;
+        }
+
+        #emailError, #passwordError {
+            margin-top: 5px;
+        }
+
+        .form-title {
+            margin-top:10px;
+        }
+
+        .image-input {
+            padding-left: 25px;
+            margin-top: 0px;
+        }
+
+        .image-input-row{
+            box-sizing: content-box;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="background-image"></div>
+<div class="form-container">
+  <div class="container-fluid">
+    <div>
+      <h2 class="form-title">Register Pacient</h2>
+    </div>
+    <form action="#" th:action="@{/submitPacient}" th:object="${pacient}" method="post" enctype="multipart/form-data" onsubmit="return validateEmail()">
+      <div class="row">
+        <div class="col-md-6">
+          <!-- Câmpurile pentru prima coloană -->
+          <div class="form-group">
+            <label>First Name</label>
+            <input class="form-control shadow-none" th:field="*{firstName}" type="text" required>
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input class="form-control shadow-none" th:field="*{lastName}" type="text" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input class="form-control shadow-none" th:field="*{email}" type="email" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-group">
+              <input class="form-control shadow-none password-input" th:field="*{password}" type="password" required>
+              <div class="input-group-append">
+                <span class="input-group-text" onclick="togglePasswordVisibility()" style="cursor: pointer;"><i class='bx bxs-show' id='passwordIcon'></i></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <!-- Câmpurile pentru a doua coloană -->
+          <div class="form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <input class="form-control shadow-none" th:field="*{phoneNumber}" type="text" required>
+          </div>
+          <div class="form-group">
+            <label for="cnp">CNP</label>
+            <input class="form-control shadow-none" th:field="*{cnp}" type="text" required>
+          </div>
+          <div class="form-group">
+            <label for="age">Age</label>
+            <input class="form-control shadow-none" th:field="*{age}" type="text" required>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" th:field="*{userType}" value="pacient"/>
+
+      <div class="form-group row">
+        <button class="btn btn-orange" type="submit">Register Now</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+
+    function validateEmail() {
+        var email = document.getElementById("email").value;
+        var emailError = document.getElementById("emailError");
+
+        if (!email.includes('@')) {
+            emailError.textContent = "Email must contain an '@'.";
+            return false;
+        } else {
+            emailError.textContent = ""; // Clear any previous error message
+            return true;
+        }
+    }
+
+    function sendCodeRequest() {
+        var email = document.getElementById("email").value;
+        document.getElementById("validateAccount").action = "/requestValidateAccount";
+        document.getElementById("validateAccount").submit();
+    }
+
+    function togglePasswordVisibility() {
+        var passwordInput = document.getElementById("password");
+        var passwordIcon = document.getElementById("passwordIcon");
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            passwordIcon.classList.replace('bxs-show', 'bxs-hide');
+        } else {
+            passwordInput.type = "password";
+            passwordIcon.classList.replace('bxs-hide', 'bxs-show');
+        }
+    }
+
+    function addFocusStyles() {
+        var passwordInput = document.getElementById("password");
+        var inputGroupText = passwordInput.nextElementSibling.querySelector('.input-group-text');
+        passwordInput.classList.add('focused');
+        if(inputGroupText) {
+            inputGroupText.classList.add('focused');
+        }
+    }
+
+    function removeFocusStyles() {
+        var passwordInput = document.getElementById("password");
+        var inputGroupText = passwordInput.nextElementSibling.querySelector('.input-group-text');
+        passwordInput.classList.remove('focused');
+        if(inputGroupText) {
+            inputGroupText.classList.remove('focused');
+        }
+    }
+    document.getElementById("password").addEventListener('focus', addFocusStyles);
+    document.getElementById("password").addEventListener('blur', removeFocusStyles);
+</script>
+<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+</body>
+</html>

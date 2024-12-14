@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medi-Core - Add Reservation</title>
+  <link rel="icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+  <link rel="stylesheet" th:href="@{/formStyleSheet.css}">
+
+  <script>
+    function limitTextarea(element) {
+      var maxChars = 300;
+      var charCount = element.value.length;
+      if (charCount > maxChars) {
+        element.value = element.value.substring(0, maxChars);
+        charCount = maxChars;
+      }
+      document.getElementById('charCount').innerText = charCount + '/' + maxChars + ' characters';
+    }
+  </script>
+</head>
+<body>
+
+<div class="container">
+  <form class="form-container" th:action="@{/addReservationByPacient}" th:object="${reservation}" method="post">
+    <h2 class="h2-title">Add Reservation</h2>
+
+    <input type="hidden" th:field="*{pacientID}"><br>
+
+    <p th:if="${#fields.hasErrors('reservationDate')}" th:errors="*{reservationDate}" style="color: red"></p>
+    <label>Reservation Date</label>
+    <input type="hidden" th:field="*{reservationDate}"><br>
+    <input type="text" th:field="*{reservationDate}" th:value="${#temporals.format(reservationDate, 'yyyy-MM-dd')}" readonly><br>
+
+    <label>Reservation Time</label>
+    <input type="time" th:field="*{reservationTime}"><br>
+
+    <p th:if="${#fields.hasErrors('specialization')}" th:errors="*{specialization}" style="color: red"></p>
+    <label>Specialization</label>
+    <select th:field="*{specialization}">
+      <option value="" disabled selected>Select a specialization</option>
+      <option th:each="specialization : ${specializations}" th:value="${specialization.specializationName}" th:text="${specialization.specializationName}"></option>
+    </select><br>
+
+    <p th:if="${#fields.hasErrors('issue')}" th:errors="*{issue}" style="color: red"></p>
+    <label>Issue</label>
+    <textarea oninput="limitTextarea(this)" rows="5" cols="50" th:field="*{issue}"></textarea><br>
+    <span id="charCount">0/300 characters</span><br><br>
+
+    <p th:if="${errorMessage}" style="color: red" th:text="${errorMessage}"></p>
+    <button type="submit" class="button">Save</button>
+    <button type="button" class="button cancel-button" onclick="history.back()">Cancel</button>
+  </form>
+</div>
+
+</body>
+</html>

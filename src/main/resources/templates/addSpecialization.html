@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medi-Core - Add Specialization</title>
+  <link rel="icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+  <link rel="stylesheet" th:href="@{/formStyleSheet.css}">
+</head>
+
+<body>
+<div class="container">
+  <form class="form-container" th:action="@{/addSpecialization}" th:object="${specialization}" method="post">
+    <h2 class="h2-title">Add Specialization</h2>
+    <p th:if="${#fields.hasErrors('specializationName')}" th:errors="*{specializationName}" style="color: red"></p>
+    <input type="text" placeholder="Specialization Name" th:field="*{specializationName}"><br>
+
+    <p th:if="${#fields.hasErrors('medic')}" th:errors="*{medic}" style="color: red"></p>
+    <input type="text" placeholder="Medic" th:field="*{medic}"><br>
+
+    <p th:if="${#fields.hasErrors('room')}" th:errors="*{room}" style="color: red"></p>
+    <input type="text" placeholder="Room" th:field="*{room}"><br>
+
+    <button type="submit" class="button">Save</button>
+    <button type="button" class="button cancel-button" onclick="history.back()">Cancel</button>
+  </form>
+</div>
+</body>
+
+</html>

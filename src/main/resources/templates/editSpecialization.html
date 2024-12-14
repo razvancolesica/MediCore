@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediCore - Edit Specialization</title>
+  <link rel="icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+  <link rel="stylesheet" th:href="@{/formStyleSheet.css}">
+</head>
+
+<body>
+<div class="container">
+  <form class="form-container" th:action="@{/editSpecialization}" th:object="${specialization}" method="post">
+    <h2 class="h2-title">Edit Specialization</h2>
+    <input type="hidden" name="id" th:value="${specialization.specializationID}" />
+    <input type="text" placeholder="specializationName" th:field="*{specializationName}"><br>
+    <input type="text" placeholder="medic" th:field="*{medic}"><br>
+    <input type="text" placeholder="room" th:field="*{room}"><br>
+
+    <button type="submit" class="button">Save</button>
+    <button type="button" class="button cancel-button" onclick="history.back()">Cancel</button>
+  </form>
+</div>
+</body>
+
+</html>

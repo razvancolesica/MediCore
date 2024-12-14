@@ -1,0 +1,110 @@
+/* Stiluri comune */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 5px;
+    padding: 5px;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px;
+}
+
+nav ul li a:hover {
+    background-color: #555;
+}
+
+
+/* Stilul butonului pentru Log In */
+.login-button {
+    float: right;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.login-button a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px;
+    background-color: #333;
+}
+
+.login-button a:hover {
+    background-color: #555;
+}
+
+
+/* Stilizare tabel */
+.table-container {
+  border-collapse: collapse;
+  width: 80%; /* Lățimea tabelului */
+  margin: 0 auto; /* Centrare pe pagină */
+}
+
+/* Stilizare cap tabel */
+.table-container thead {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Stilizare celule cap tabel */
+.table-container th, td {
+  padding: 8px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Stilizare alternativă pentru rândurile tabelului */
+.table-container tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.add-button {
+    width: 100px; /* Lățimea butonului */
+    height: 50px; /* Înălțimea butonului */
+    background-color: #333; /* Culoarea de fundal */
+    color: #fff; /* Culoarea textului */
+    border: none; /* Fără bordură */
+    cursor: pointer; /* Cursor pointer la hover */
+    text-align: center;
+    position: center;
+}
+
+.edit-button, .delete-button {
+  width: 80px; /* Lățimea butonului */
+  height: 30px; /* Înălțimea butonului */
+  background-color: #333; /* Culoarea de fundal */
+  color: #fff; /* Culoarea textului */
+  border: none; /* Fără bordură */
+  cursor: pointer; /* Cursor pointer la hover */
+  display: inline-flex; /* Afișează iconița și textul pe aceeași linie */
+  align-items: center; /* Aliniază vertical iconița și textul */
+  justify-content: center; /* Aliniază orizontal iconița și textul */
+}
+
+.edit-button i, .delete-button i {
+  margin-right: 5px; /* Spațiul între iconiță și text */
+}
+
+
+
+
+

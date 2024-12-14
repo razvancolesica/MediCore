@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCore - Home</title>
+    <link rel="icon" th:href="@{/images/favicon.png}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/homePagePacientStyle.css}">
+    <link rel="stylesheet" th:href="@{/pageStyleSheet.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/fullcalendar@5.10.1/main.min.css">
+    <script src="https://unpkg.com/fullcalendar@5.10.1/main.min.js"></script>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            margin-left: 20px;
+            padding: 10px;
+        }
+
+        .calendar-container {
+            width: 40%;
+        }
+
+        #calendar {
+            width: 100%;
+            height: 400px;
+            font-size: 14px;
+            background-color: white;
+            color: black;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .fc .fc-toolbar.fc-header-toolbar {
+            background-color: #cf5a7a;
+            color: white;
+            border-radius: 10px 10px 0 0;
+            padding: 5px;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 16px;
+        }
+
+        .fc .fc-button {
+            background-color: #913f55;
+            font-size: 12px;
+            border-radius: 5px;
+            border: none;
+            margin-right: 3px;
+            box-shadow: none !important;
+        }
+
+        .fc-today-button {
+            background-color: #913f55 !important;
+        }
+
+        .fc-today-button:hover {
+            background-color: #682d3d !important;
+        }
+
+        .fc-button:hover {
+            background-color: #682d3d !important;
+        }
+
+        .fc .fc-daygrid-day-number {
+            font-size: 12px;
+        }
+
+        .table-container {
+            width: 57.5%;
+            margin-top: 0;
+            position: relative;
+        }
+
+        #table-container {
+            display: none;
+        }
+
+        #table-container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #table-container th, #table-container td {
+            padding: 8px;
+        }
+
+        #table-container th {
+            background-color: #cf5a7a;
+            color: white;
+        }
+
+        .fc-daygrid-day:hover {
+            cursor: pointer;
+            background-color: #f9f9f9;
+        }
+
+        .reservation-day {
+            background-color: #e7adbd !important;
+            color: white;
+        }
+
+        .reservation-day:hover {
+            background-color: #dd8ca2 !important;
+        }
+
+        .selected-day {
+            background-color: #adbde7 !important;
+            color: white;
+        }
+
+        .fc-day-today {
+            background-color: #ade7d7 !important;
+            color: white !important;
+        }
+
+        .fc-toolbar-title {
+            margin-left: 3px !important;
+        }
+
+        .add-reservation-button-by-pacient {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, 0);
+            font-size: 16px;
+            margin: 0 auto;
+            margin-top: 10px;
+            text-align: center;
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 15px;
+            background: rgb(98, 75, 117);
+            background: linear-gradient(to right, #cf5a7a 0%, #624B75 51%, #cf5a7a 100%);
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: #ffffff;
+            border: none;
+        }
+
+        .add-reservation-button-by-pacient:hover {
+            color: #fff;
+            background-position: right center;
+            cursor: pointer;
+        }
+
+        #default-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<div class="top-bar">
+    <div class="user-button">
+        <button class="user-btn">
+            <img th:src="@{/images/pacient-profile-image.svg}" alt="User Avatar">
+            <div class="user-info">
+                <span class="user-name" th:text="${pacient.lastName + ' ' + pacient.firstName}"></span>
+                <span class="user-role">Pacient</span>
+            </div>
+            <i id="user-icon" class="fas fa-chevron-down dropdown-arrow"></i>
+        </button>
+        <div class="dropdown-content" id="dropdown-content">
+            <a href="myProfile">My Profile</a>
+            <a href="/" onclick="return confirm('Are you sure you want to log out?');">Log Out</a>
+        </div>
+    </div>
+</div>
+
+<div class="all-content">
+    <header>
+        <div class="sidebar">
+            <div class="logo-container">
+                <img th:src="@{/images/logo.png}" alt="Hospital Logo">
+            </div>
+            <nav>
+                <ul>
+                    <li><a class="active-page" href="homePagePacient"><i class="fas fa-house-medical menu-icon"></i>Home</a></li>
+                    <li><a href="reservationsForPacient"><i class="fas fa-calendar-days menu-icon"></i>My Reservations</a></li>
+                    <li><a href="showSpecializationsToPacient"><i class="fa-solid fa-briefcase-medical"></i> Specializations</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <main>
+            <table class="top-table">
+                <tr>
+                    <td class="reservations-statistics-container">
+                        <div class="statistics-container">
+                            <div class="top-text">Total Reservations</div>
+                            <div class="bottom-text" th:text="${totalReservations}"></div>
+                        </div>
+                    </td>
+                    <td class="pacients-statistics-container">
+                        <div class="statistics-container">
+                            <div class="top-text">Total Pacients</div>
+                            <div class="bottom-text" th:text="${totalPacients}"></div>
+                        </div>
+                    </td>
+                    <td class="specializations-statistics-container">
+                        <div class="statistics-container">
+                            <div class="top-text">Total Specializations</div>
+                            <div class="bottom-text" th:text="${totalSpecializations}"></div>
+                        </div>
+                    </td>
+                    <td class="doctors-statistics-container">
+                        <div class="statistics-container">
+                            <div class="top-text">Specialist Doctors</div>
+                            <div class="bottom-text" th:text="${totalDoctors}"></div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="container">
+                <div class="calendar-container">
+                    <div id="calendar"></div>
+                </div>
+                <div class="table-container">
+                    <div id="default-message" style="text-align: center; font-size: 18px; background-color: #f9f9f9; color: #666; width:100%;">
+                        <p>Please select a date from the calendar to see reservations.</p>
+                    </div>
+                    <div id="table-container"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+function toggleDropdown(event) {
+    event.stopPropagation(); // Prevent event propagation to avoid dropdown opening when clicking on user name or avatar
+    document.getElementById("dropdown-content").classList.toggle("show");
+}
+
+document.getElementById("user-icon").addEventListener("click", toggleDropdown);
+
+window.onclick = function(event) {
+    if (!event.target.matches('.user-btn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var tableContainer = document.getElementById('table-container');
+    var defaultMessage = document.getElementById('default-message');
+    var currentDate = new Date(); // Data curentă
+    var selectedCell = null; // Store the currently selected cell
+
+    fetch('/patientReservationDates')
+        .then(response => response.json())
+        .then(dates => {
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                dateClick: function(info) {
+                    var selectedDate = new Date(info.dateStr);
+
+                    // Clear the previous selection
+                    if (selectedCell) {
+                        selectedCell.classList.remove('selected-day');
+                        if (dates.includes(selectedCell.getAttribute('data-date'))) {
+                            selectedCell.classList.add('reservation-day');
+                        }
+                    }
+
+                    // Highlight the new selection
+                    info.dayEl.classList.add('selected-day');
+                    selectedCell = info.dayEl;
+
+                    fetch('/reservationsOverviewForDay?date=' + info.dateStr)
+                        .then(response => response.text())
+                        .then(data => {
+                            tableContainer.style.display = 'block';
+                            tableContainer.innerHTML = data;
+                            defaultMessage.style.display = 'none'; // Ascunde mesajul implicit când se afișează tabelul
+
+                            // Adaugă butonul pentru adăugarea rezervării dacă data este mai mare decât data curentă
+                            if (selectedDate > currentDate) {
+                                var addButton = document.createElement('button');
+                                addButton.innerText = 'Add Reservation';
+                                addButton.className = 'add-reservation-button-by-pacient';
+                                addButton.onclick = function() {
+                                    window.location.href = '/showAddReservationByPacient?date=' + info.dateStr;
+                                };
+                                tableContainer.appendChild(addButton);
+                            }
+                        });
+                },
+                dayCellDidMount: function(info) {
+                    var dateStr = new Date(info.date).toLocaleDateString('en-CA'); // Folosește formatul corect
+                    if (dates.includes(dateStr)) {
+                        info.el.classList.add('reservation-day');
+                    }
+                }
+            });
+            calendar.render();
+        });
+});
+</script>
+</body>
+</html>
