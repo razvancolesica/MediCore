@@ -1,5 +1,6 @@
 package com.spital.service;
 import com.spital.DTO.PacientDTO;
+import com.spital.DTO.PacientHomePageDTO;
 import com.spital.DTO.ReservationDTO;
 import com.spital.entity.Pacient;
 import com.spital.repository.AdminRepository;
@@ -23,10 +24,10 @@ public class PacientService {
     AdminRepository adminRepository;
     @Autowired
     ReservationService reservationService;
-
+    @Autowired
+    SpecializationService specializationService;
 
     ModelMapper mapper = new ModelMapper();
-
 
 
     //Afiseaza toti pacientii.
@@ -134,5 +135,77 @@ public class PacientService {
     {
         pacientRepository.save(pacient);
     }
+
+
+    //register pacient
+    public PacientDTO registerPacient(PacientDTO pacientDTO) {
+        log.info("PacientService.registerPacient() registering pacient...");
+
+        // Verificăm dacă email-ul pacientului există deja
+        if (emailExists(pacientDTO.getEmail())) {
+            log.warn("Email already exists: " + pacientDTO.getEmail());
+            return null; // Sau returnăm un mesaj de eroare mai detaliat, dacă este cazul
+        }
+
+        // Creăm un obiect Pacient din DTO
+        Pacient pacient = mapper.map(pacientDTO, Pacient.class);
+
+        // Salvăm pacientul în baza de date
+        pacientRepository.save(pacient);
+
+        // Returnăm DTO-ul pacientului salvat
+        return mapper.map(pacient, PacientDTO.class);
+    }
+
+
+    public PacientHomePageDTO getPacientHomePageDTO(String email) {
+        log.info("PacientService.getPacientHomePageDTO() retrieving pacient profile for email: " + email);
+
+        // Căutăm pacientul în baza de date pe baza email-ului
+        Optional<Pacient> optionalPacient = pacientRepository.findByEmail(email);
+
+        if (optionalPacient.isPresent()) {
+            Pacient pacient = optionalPacient.get();
+
+            // Creăm obiectul PacientDTO
+            PacientDTO pacientDTO = mapper.map(pacient, PacientDTO.class);
+
+            // Obținem rezervările pacientului
+            List<ReservationDTO> reservations = reservationService.getReservationsForPacient(pacient.getPacientID());
+
+            // Calculăm totalul rezervărilor pentru pacient
+            int totalReservationsForPacient = reservations.size();
+
+            // Calculăm totalul rezervărilor
+            int totalReservations = reservationService.getAllReservations().size();
+
+            // Calculăm totalul pacienților
+            int totalPacients = getAllPacients().size();
+
+            // Calculăm totalul specializărilor
+            int totalSpecializations = specializationService.getAllSpecializations().size();
+
+            // Calculăm totalul medicilor
+            int totalDoctors = specializationService.getAllSpecializations().size();
+
+            // Creăm obiectul PacientHomePageDTO
+            PacientHomePageDTO pacientHomePageDTO = new PacientHomePageDTO(
+                    pacientDTO,
+                    reservations,
+                    totalReservationsForPacient,
+                    totalReservations,
+                    totalPacients,
+                    totalSpecializations,
+                    totalDoctors
+            );
+
+            return pacientHomePageDTO;
+        } else {
+            log.warn("Pacient not found with email: " + email);
+            return null; // Sau ar putea arunca o excepție sau returna un mesaj de eroare
+        }
+    }
+
+
 
 }
