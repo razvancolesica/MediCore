@@ -5,24 +5,21 @@ import com.spital.DTO.SpecializationDTO;
 import com.spital.DTO.UserDetails;
 import com.spital.service.PacientService;
 import com.spital.service.SpecializationService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@Controller
 @Log4j2
+@RestController
+@RequestMapping("/api/specializations")
 public class SpecializationController {
 
     @Autowired
@@ -31,105 +28,73 @@ public class SpecializationController {
     @Autowired
     private PacientService pacientService;
 
-    @GetMapping("/specializations")
-    public ModelAndView getAllSpecializations(HttpSession session) {
-        UserDetails userDetails = (UserDetails) session.getAttribute("userDetails");
-        ModelAndView redirect = new ModelAndView("startPage");
-        if(!userDetails.getUserType().equals("admin"))
-        {
-            return redirect;
-        }
-
-        log.info("SpecializationController.getAllSpecializations() has started...");
+    // Obține toate specializările
+    @GetMapping
+    public ResponseEntity<List<SpecializationDTO>> getAllSpecializations() {
+        log.info("SpecializationController.getAllSpecializations() started...");
         List<SpecializationDTO> specializations = service.getAllSpecializations();
-        ModelAndView modelAndView = new ModelAndView("specializations");
-        modelAndView.addObject("specializations", specializations);
-        log.info("SpecializationController.getAllSpecializations() has finished.");
-        return modelAndView;
+        log.info("SpecializationController.getAllSpecializations() finished.");
+        return ResponseEntity.ok(specializations);
     }
 
-    @PostMapping("/addSpecialization")
-    public String addSpecialization(@Valid @ModelAttribute("specialization") SpecializationDTO specialization, BindingResult bindingResult, Model model){
-        if(specialization.getSpecializationName().isEmpty()){
+    // Adaugă o specializare
+    @PostMapping
+    public ResponseEntity<?> addSpecialization(@Valid @RequestBody SpecializationDTO specialization,
+                                               BindingResult bindingResult) {
+        if (specialization.getSpecializationName() == null || specialization.getSpecializationName().isEmpty()) {
             bindingResult.rejectValue("specializationName", "error.specializationName", "Specialization name cannot be empty");
         }
-
-        if(specialization.getMedic().isEmpty()){
+        if (specialization.getMedic() == null || specialization.getMedic().isEmpty()) {
             bindingResult.rejectValue("medic", "error.medic", "Medic cannot be empty");
         }
-
-        if(specialization.getRoom().isEmpty()){
+        if (specialization.getRoom() == null || specialization.getRoom().isEmpty()) {
             bindingResult.rejectValue("room", "error.room", "Room cannot be empty");
         }
-
-        if(bindingResult.hasErrors()){
-            return "addSpecialization";
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         }
-
         SpecializationDTO addedSpecialization = service.addSpecialization(specialization);
         if (addedSpecialization == null) {
-            model.addAttribute("errorMessage", "Specializarea există deja!");
-            return "addSpecialization";
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Specialization already exists!");
         }
-        return "redirect:/specializations";
+        return ResponseEntity.status(HttpStatus.CREATED).body(addedSpecialization);
     }
 
-    @GetMapping("/showAddSpecialization")
-    public String showAddSpecialization(Model model, HttpSession session){
-        UserDetails userDetails = (UserDetails) session.getAttribute("userDetails");
-        if(!userDetails.getUserType().equals("admin"))
-        {
-            return "redirect:/";
-        }
-        model.addAttribute("specialization", new SpecializationDTO());
-        return "addSpecialization";
-    }
-
-    @PostMapping("/editSpecialization")
-    public String editSpecialization(@RequestParam Integer id, @ModelAttribute("specialization") SpecializationDTO updatedSpecializationDTO) {
-        service.editSpecialization(id, updatedSpecializationDTO);
-        return "redirect:/specializations";
-    }
-
-    @GetMapping("/showEditSpecialization")
-    public String showEditSpecializationPage(@RequestParam Integer id, Model model, HttpSession session) {
-        UserDetails userDetails = (UserDetails) session.getAttribute("userDetails");
-        if(!userDetails.getUserType().equals("admin"))
-        {
-            return "redirect:/";
-        }
-
-        Optional<SpecializationDTO> specializationDTOOptional = service.getSpecializationById(id);
-        if (specializationDTOOptional.isPresent()) {
-            model.addAttribute("specialization", specializationDTOOptional.get());
-            return "editSpecialization";
+    // Obține o specializare după ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getSpecializationById(@PathVariable Integer id) {
+        Optional<SpecializationDTO> specializationOptional = service.getSpecializationById(id);
+        if (specializationOptional.isPresent()) {
+            return ResponseEntity.ok(specializationOptional.get());
         } else {
-            // Tratează cazul în care specializarea nu este găsită
-            return "redirect:/specializations";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Specialization not found");
         }
     }
 
-    @PostMapping("/deleteSpecialization")
-    public String deleteSpecialization(@RequestParam Integer specializationID) {
-        log.info("SpecializationController.deleteSpecialization() has started...");
-        service.deleteSpecialization(specializationID);
-        log.info("SpecializationController.deleteSpecialization() has finished.");
-        return "redirect:/specializations"; // Redirecționează către pagina de specializari
+    // Actualizează o specializare
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editSpecialization(@PathVariable Integer id,
+                                                @RequestBody SpecializationDTO updatedSpecializationDTO) {
+        service.editSpecialization(id, updatedSpecializationDTO);
+        return ResponseEntity.ok("Specialization updated successfully");
     }
 
+    // Șterge o specializare
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteSpecialization(@PathVariable Integer id) {
+        log.info("SpecializationController.deleteSpecialization() started...");
+        service.deleteSpecialization(id);
+        log.info("SpecializationController.deleteSpecialization() finished.");
+        return ResponseEntity.ok("Specialization deleted successfully");
+    }
 
-    @GetMapping("/showSpecializationsToPacient")
-    public ModelAndView showSpecializationsToPacient(HttpSession session, Model model) {
-        UserDetails userDetails = (UserDetails) session.getAttribute("userDetails");
+    // Obține specializările pentru un pacient
+    @GetMapping("/pacient")
+    public ResponseEntity<?> getSpecializationsForPacient(@AuthenticationPrincipal UserDetails userDetails) {
         PacientDTO pacient = pacientService.getPacientByEmail(userDetails.getEmail());
-        model.addAttribute("pacient", pacient);
-
-        log.info("SpecializationController.showSpecializationsToPacient() has started...");
+        log.info("SpecializationController.getSpecializationsForPacient() started...");
         List<SpecializationDTO> specializations = service.getAllSpecializations();
-        ModelAndView modelAndView = new ModelAndView("showSpecializationsToPacient");
-        modelAndView.addObject("specializations", specializations);
-        log.info("SpecializationController.showSpecializationsToPacient() has finished.");
-        return modelAndView;
+        log.info("SpecializationController.getSpecializationsForPacient() finished.");
+        return ResponseEntity.ok(specializations);
     }
-
 }

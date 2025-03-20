@@ -119,16 +119,9 @@ public class HomePageController {
         if (reservation.getReservationDate() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Reservation date cannot be empty");
         }
-        if (reservation.getReservationTime() == null || reservation.getReservationTime().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Reservation time cannot be empty");
-        }
         if (reservation.getIssue().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Issue cannot be empty");
         }
-
-        // Concatenare data și ora pentru a crea LocalDateTime
-        String dateTimeStr = reservation.getReservationDate().toLocalDate() + "T" + reservation.getReservationTime();
-        reservation.setReservationDate(LocalDateTime.parse(dateTimeStr));
 
         ReservationDTO addedReservation = reservationService.addReservation(reservation);
         if (addedReservation == null) {

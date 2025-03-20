@@ -1,9 +1,5 @@
 package com.spital.DTO;
 
-import com.spital.entity.Specialization;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +18,6 @@ public class ReservationDTO {
     private String firstName;
     private String lastName;
     private LocalDateTime reservationDate;
-    private String reservationTime;
     private String specialization;
     private String issue;
 }

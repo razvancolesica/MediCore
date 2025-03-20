@@ -1,13 +1,14 @@
 package com.spital.controller;
 
-import com.spital.DTO.UserDetails;
 import com.spital.entity.Admin;
 import com.spital.entity.Pacient;
 import com.spital.repository.AdminRepository;
 import com.spital.repository.PacientRepository;
+import com.spital.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -18,13 +19,17 @@ import java.util.regex.Pattern;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private UserDetails userDetails = new UserDetails();
-
     @Autowired
     private PacientRepository pacientRepository;
 
     @Autowired
     private AdminRepository adminRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
@@ -45,35 +50,21 @@ public class AuthController {
                     .body("Email and password must not be empty.");
         }
 
-        userDetails.setPassword(password);
-        userDetails.setEmail(email);
-
         // Verificarea în baza de date
         Optional<Pacient> pacientUser = pacientRepository.findByEmail(email);
         Optional<Admin> adminUser = adminRepository.findByEmail(email);
 
-        if (pacientUser.isPresent()) {
-            if (password.equals(pacientUser.get().getPassword())) {
-                userDetails.setUserType("pacient");
-                return ResponseEntity.ok(userDetails); // Returnează informațiile utilizatorului
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("Invalid pacient credentials.");
-            }
+        if (pacientUser.isPresent() && passwordEncoder.matches(password, pacientUser.get().getPassword())) {
+            String token = jwtUtil.generateToken(email, pacientUser.get().getUserType().toUpperCase());
+            return ResponseEntity.ok(token);
         }
 
-        if (adminUser.isPresent()) {
-            if (password.equals(adminUser.get().getPassword())) {
-                userDetails.setUserType("admin");
-                return ResponseEntity.ok(userDetails); // Returnează informațiile utilizatorului
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("Invalid admin credentials.");
-            }
+        if (adminUser.isPresent() && passwordEncoder.matches(password, adminUser.get().getPassword())) {
+            String token = jwtUtil.generateToken(email, adminUser.get().getUserType().toUpperCase());
+            return ResponseEntity.ok(token);
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("User not found.");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("Invalid credentials.");
     }
-
 }

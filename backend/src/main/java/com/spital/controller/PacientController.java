@@ -4,10 +4,16 @@ import com.spital.DTO.PacientDTO;
 import com.spital.DTO.PacientHomePageDTO;
 import com.spital.service.PacientService;
 import com.spital.service.ReservationService;
+import com.spital.security.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,45 +29,22 @@ public class PacientController {
     @Autowired
     private ReservationService reservationService;
 
-    // Obține lista tuturor pacienților (Admin Access)
-    @GetMapping
-    public ResponseEntity<List<PacientDTO>> getAllPacients() {
-        log.info("PacientController.getAllPacients() has started...");
-        List<PacientDTO> pacients = service.getAllPacients();
-        log.info("PacientController.getAllPacients() has finished.");
-        return ResponseEntity.ok(pacients);
-    }
+    @Autowired
+    private JwtUtil jwtUtil;
 
-    // Obține profilul unui pacient după email (Pacient Access)
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+
+    // Obține profilul pacientului autentificat
+    @Operation(security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping("/profile")
-    public ResponseEntity<PacientHomePageDTO> getMyProfile(@RequestParam String email) {
+    public ResponseEntity<PacientHomePageDTO> getMyProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
         PacientHomePageDTO pacientHomePageDTO = service.getPacientHomePageDTO(email);
         return ResponseEntity.ok(pacientHomePageDTO);
-    }
-
-    // Adaugă un pacient nou (Admin Access)
-    @PostMapping
-    public ResponseEntity<PacientDTO> addPacient(@RequestBody PacientDTO pacientDTO) {
-        PacientDTO addedPacient = service.addPacient(pacientDTO);
-        if (addedPacient == null) {
-            return ResponseEntity.badRequest().build(); // Pacientul există deja
-        }
-        return ResponseEntity.ok(addedPacient);
-    }
-
-    // Editare pacient existent (Admin Access)
-    @PutMapping("/{id}")
-    public ResponseEntity<PacientDTO> editPacient(@PathVariable Integer id, @RequestBody PacientDTO pacientDTO) {
-        PacientDTO updatedPacient = service.editPacient(id, pacientDTO);
-        return ResponseEntity.ok(updatedPacient);
-    }
-
-    // Șterge pacient după ID (Admin Access)
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePacient(@PathVariable Integer id) {
-        service.deletePacient(id);
-        log.info("PacientController.deletePacient() has finished.");
-        return ResponseEntity.noContent().build();
     }
 
     // Înregistrare pacient (Pacient Access)
@@ -70,14 +53,13 @@ public class PacientController {
         if (service.emailExists(pacientDTO.getEmail())) {
             return ResponseEntity.badRequest().build(); // Email deja folosit
         }
+
+        // Encodăm parola înainte de a o salva
+        pacientDTO.setPassword(passwordEncoder.encode(pacientDTO.getPassword()));
+
         PacientDTO savedPacient = service.registerPacient(pacientDTO);
         return ResponseEntity.ok(savedPacient);
     }
 
-    // Obține detalii pacient după ID (Admin Access)
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<PacientDTO>> getPacientById(@PathVariable Integer id) {
-        Optional<PacientDTO> pacient = service.getPacientById(id);
-        return pacient.isPresent() ? ResponseEntity.ok(pacient) : ResponseEntity.notFound().build();
-    }
+
 }
